@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Quest: Conditionals Master</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Tone.js for Sound Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        type0: '#06b6d4', // Cyan for Type 0 (Facts/Cool)
+                        type1: '#f59e0b', // Amber for Type 1 (Future/Energy)
+                    },
+                    animation: {
+                        'bounce-short': 'bounce 0.5s ease-in-out 1',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)' },
+                            '50%': { boxShadow: '0 0 25px rgba(99, 102, 241, 0.8)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-card {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full transition-colors duration-300 flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showScreen('modeSelect')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-bolt text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight">GrammarQuest</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Conditionals Type 0 & 1</p>
+                </div>
+            </div>
+
+            <!-- Header Controls & Status -->
+            <div class="flex items-center space-x-3">
+                <!-- Sound Toggle -->
+                <button id="soundBtn" onclick="toggleSound()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center" title="Toggle Sound">
+                    <i class="fa-solid fa-volume-high text-lg" id="soundIcon"></i>
+                </button>
+
+                <!-- Grammar Guide Trigger -->
+                <button onclick="openGrammarModal()" class="px-3 py-2 rounded-xl bg-indigo-50 dark:bg-slate-800 text-brand-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-slate-700 font-semibold text-sm transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span class="hidden sm:inline">Grammar Cheat Sheet</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center" title="Toggle Dark Mode">
+                    <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-lg hidden dark:block text-amber-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- ================= SCREEN 1: PROFILE SETUP ================= -->
+        <div id="profileScreen" class="screen transition-all duration-300">
+            <div class="max-w-md mx-auto glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border text-center">
+                <div class="inline-block p-3 rounded-full bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-indigo-400 mb-4">
+                    <i class="fa-solid fa-user-astronaut text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold mb-1">Create Your Profile</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mb-6">Choose an avatar and name to start your grammar adventure!</p>
+
+                <!-- Avatar Selection -->
+                <div class="mb-6">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Choose Avatar</label>
+                    <div class="grid grid-cols-4 gap-3" id="avatarGrid">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Player Name Input -->
+                <div class="mb-6 text-left">
+                    <label for="playerName" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Player Name</label>
+                    <input type="text" id="playerName" placeholder="Enter your hero name..." value="Grammar Champ" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium">
+                </div>
+
+                <button onclick="saveProfile()" class="w-full py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-lg shadow-brand-500/30 transition transform hover:-translate-y-0.5 active:translate-y-0">
+                    Start Playing <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= SCREEN 2: GAME MODE SELECT ================= -->
+        <div id="modeSelectScreen" class="screen hidden transition-all duration-300">
+            <!-- User Status Header -->
+            <div class="flex flex-wrap items-center justify-between bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 mb-8 gap-4">
+                <div class="flex items-center space-x-3">
+                    <div id="userAvatarDisplay" class="w-12 h-12 rounded-xl bg-brand-100 dark:bg-slate-800 flex items-center justify-center text-2xl">
+                        🧑‍🎓
+                    </div>
+                    <div>
+                        <h3 id="userNameDisplay" class="font-bold text-lg leading-tight">Player</h3>
+                        <p id="userTitleDisplay" class="text-xs text-brand-600 dark:text-indigo-400 font-semibold">Grammar Novice</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6 text-sm font-semibold">
+                    <div class="text-center">
+                        <span class="block text-xs text-slate-400 uppercase font-bold">Total Stars</span>
+                        <span class="text-amber-500 font-bold text-lg"><i class="fa-solid fa-star mr-1"></i><span id="totalStars">0</span></span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block text-xs text-slate-400 uppercase font-bold">Badges</span>
+                        <span class="text-brand-500 font-bold text-lg"><i class="fa-solid fa-award mr-1"></i><span id="unlockedBadgesCount">0</span>/4</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-extrabold mb-6 text-center sm:text-left">Select Game Mode</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Campaign Mode -->
+                <div onclick="selectMode('campaign')" class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 transition cursor-pointer group flex flex-col justify-between shadow-sm hover:shadow-xl">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-brand-600 dark:text-indigo-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Campaign Levels</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Progress through 4 structured levels of increasing difficulty. Mastery step-by-step.</p>
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-bold text-brand-600 dark:text-indigo-400">
+                        <span>4 LEVELS</span>
+                        <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Survival / Arcade Mode -->
+                <div onclick="selectMode('survival')" class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 hover:border-red-500 dark:hover:border-red-500 transition cursor-pointer group flex flex-col justify-between shadow-sm hover:shadow-xl">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Survival Arcade</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">3 Hearts! Test your speed and precision in an endless stream of random questions.</p>
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-bold text-red-500">
+                        <span>3 LIVES</span>
+                        <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Time Attack Mode -->
+                <div onclick="selectMode('speed')" class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500 transition cursor-pointer group flex flex-col justify-between shadow-sm hover:shadow-xl">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Speed Challenge</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">60 Seconds on the clock! How many correct conditionals can you answer before time runs out?</p>
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-bold text-amber-500">
+                        <span>60 SECONDS</span>
+                        <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements & Badges Showcase -->
+            <div class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-sm uppercase tracking-wider text-slate-400 mb-4">Achievements</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="badgesContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SCREEN 3: LEVEL SELECT (CAMPAIGN) ================= -->
+        <div id="levelSelectScreen" class="screen hidden transition-all duration-300">
+            <button onclick="showScreen('modeSelect')" class="mb-6 px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-sm font-bold flex items-center space-x-2 hover:bg-slate-300 transition">
+                <i class="fa-solid fa-arrow-left"></i> <span>Back to Modes</span>
+            </button>
+
+            <h2 class="text-2xl font-extrabold mb-6">Campaign Levels</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="levelsGrid">
+                <!-- Levels populated by JS -->
+            </div>
+        </div>
+
+        <!-- ================= SCREEN 4: GAME PLAY ARENA ================= -->
+        <div id="gameScreen" class="screen hidden transition-all duration-300 max-w-3xl mx-auto w-full">
+            <!-- Game HUD Header -->
+            <div class="flex items-center justify-between mb-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <!-- Score & Streak -->
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <span class="text-xs text-slate-400 font-bold uppercase block">Score</span>
+                        <span id="gameScore" class="text-xl font-black text-brand-600 dark:text-indigo-400">0</span>
+                    </div>
+                    <div class="border-l border-slate-200 dark:border-slate-800 pl-4">
+                        <span class="text-xs text-slate-400 font-bold uppercase block">Streak</span>
+                        <span class="text-xl font-black text-amber-500 flex items-center">
+                            <i class="fa-solid fa-fire mr-1 text-sm animate-bounce"></i><span id="gameStreak">0</span>
+                            <span id="comboBadge" class="hidden ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">x2</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Center: Timer or Health -->
+                <div id="hudCenter" class="flex items-center justify-center">
+                    <!-- Populated dynamically (Timer or Hearts) -->
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-28 sm:w-36 text-right">
+                    <span class="text-xs text-slate-400 font-bold uppercase block mb-1">Progress</span>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="gameProgressBar" class="bg-brand-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION CARD -->
+            <div id="questionCard" class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
+                <!-- Question Type Badge -->
+                <div class="flex justify-between items-center mb-6">
+                    <span id="questionCategoryTag" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-100 text-brand-700 dark:bg-indigo-900/50 dark:text-indigo-300">
+                        Type 0 vs Type 1
+                    </span>
+                    <span id="questionNumTag" class="text-xs font-semibold text-slate-400">
+                        Question 1 / 10
+                    </span>
+                </div>
+
+                <!-- Main Question Text / Prompt -->
+                <div id="questionPrompt" class="text-lg sm:text-xl font-bold mb-6 leading-relaxed">
+                    <!-- Dynamic Question Text -->
+                </div>
+
+                <!-- Interactive Answer Area (Dynamic based on Question Type) -->
+                <div id="answerArea" class="space-y-3">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Feedback Explanation Overlay / Card (Shown after answering) -->
+                <div id="feedbackCard" class="hidden mt-6 p-4 rounded-2xl border transition-all">
+                    <div class="flex items-start space-x-3">
+                        <div id="feedbackIcon" class="text-2xl mt-0.5"></div>
+                        <div class="flex-1">
+                            <h4 id="feedbackTitle" class="font-bold text-base mb-1"></h4>
+                            <p id="feedbackText" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3"></p>
+                            <div id="grammarTipBox" class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                                <!-- Rule summary -->
+                            </div>
+                        </div>
+                    </div>
+                    <button id="nextBtn" onclick="nextQuestion()" class="w-full mt-4 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-md transition flex items-center justify-center space-x-2">
+                        <span>Continue</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SCREEN 5: RESULTS SCREEN ================= -->
+        <div id="resultsScreen" class="screen hidden transition-all duration-300 max-w-xl mx-auto w-full">
+            <div class="glass-card rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-2xl text-center">
+                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-amber-400 to-amber-200 flex items-center justify-center text-4xl shadow-lg shadow-amber-500/30 mb-4 animate-bounce">
+                    🏆
+                </div>
+                <h2 class="text-3xl font-extrabold mb-1">Quiz Completed!</h2>
+                <p id="resultsSubtitle" class="text-slate-500 dark:text-slate-400 text-sm mb-6">Great job finishing the challenge!</p>
+
+                <!-- Score Grid -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl mb-6 border border-slate-100 dark:border-slate-800">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase block">Score</span>
+                        <span id="finalScore" class="text-xl font-black text-brand-600 dark:text-indigo-400">0</span>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase block">Accuracy</span>
+                        <span id="finalAccuracy" class="text-xl font-black text-emerald-500">0%</span>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase block">Max Streak</span>
+                        <span id="finalStreak" class="text-xl font-black text-amber-500">0</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button id="reviewErrorsBtn" onclick="showReviewModal()" class="w-full py-3.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-magnifying-glass font-normal"></i>
+                        <span>Review Mistakes (<span id="errorCountTag">0</span>)</span>
+                    </button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="retryGame()" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Play Again
+                        </button>
+                        <button onclick="showScreen('modeSelect')" class="py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold transition shadow-md shadow-brand-500/20">
+                            Menu <i class="fa-solid fa-house ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- GRAMMAR CHEAT SHEET MODAL -->
+    <div id="grammarModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-brand-600 dark:text-indigo-400 flex items-center justify-center">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Conditionals Reference Guide</h3>
+                </div>
+                <button onclick="closeGrammarModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-6 overflow-y-auto space-y-6 text-sm">
+                <!-- Type 0 Section -->
+                <div class="p-5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
+                    <div class="flex items-center space-x-2 text-cyan-600 dark:text-cyan-400 font-extrabold text-base mb-2">
+                        <i class="fa-solid fa-flask"></i>
+                        <span>Type 0: General Truths & Scientific Facts</span>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 mb-3">
+                        Used for things that are <strong>always true</strong>, scientific laws, habits, or general rules.
+                    </p>
+                    <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-xs mb-3">
+                        <span class="text-brand-600 dark:text-indigo-400 font-bold">IF / WHEN</span> + Present Simple, ... <span class="text-cyan-600 dark:text-cyan-400 font-bold">Present Simple</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-xs text-slate-500 dark:text-slate-400">
+                        <li><em>If you heat ice, it <strong>melts</strong>.</em></li>
+                        <li><em>When it rains, the grass <strong>gets</strong> wet.</em></li>
+                        <li><em>Plants die if they <strong>don't get</strong> water.</em></li>
+                    </ul>
+                </div>
+
+                <!-- Type 1 Section -->
+                <div class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                    <div class="flex items-center space-x-2 text-amber-600 dark:text-amber-400 font-extrabold text-base mb-2">
+                        <i class="fa-solid fa-crystal-ball"></i>
+                        <span>Type 1: Real & Possible Future Events</span>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 mb-3">
+                        Used for <strong>real possibilities</strong> or likely results in the present or future.
+                    </p>
+                    <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-xs mb-3">
+                        <span class="text-brand-600 dark:text-indigo-400 font-bold">IF</span> + Present Simple, ... <span class="text-amber-600 dark:text-amber-400 font-bold">WILL + Base Verb</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-xs text-slate-500 dark:text-slate-400">
+                        <li><em>If it rains tomorrow, we <strong>will stay</strong> inside.</em></li>
+                        <li><em>She <strong>will pass</strong> the test if she studies hard.</em></li>
+                        <li><em>Unless you hurry, you <strong>will miss</strong> the bus.</em> (Unless = If not)</li>
+                    </ul>
+                </div>
+
+                <!-- Key Rules & Order -->
+                <div class="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-xl">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Punctuation & Structure Tips</h4>
+                    <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                        <li><strong>Comma Rule:</strong> If the <em>"If clause"</em> comes first, use a comma! <br>
+                        <span class="text-slate-400">e.g., "If it rains<b>,</b> we will cancel." VS "We will cancel if it rains." (No comma)</span></li>
+                        <li><strong>Never put "WILL" inside the IF-clause:</strong><br>
+                        <span class="text-red-500 line-through">If it will rain, we will stay...</span> ❌<br>
+                        <span class="text-emerald-500">If it rains, we will stay...</span> ✅</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MISTAKES REVIEW MODAL -->
+    <div id="reviewModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-bold text-lg"><i class="fa-solid fa-list-check text-brand-500 mr-2"></i>Review Mistakes</h3>
+                <button onclick="closeReviewModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="reviewList" class="p-6 overflow-y-auto space-y-4 text-sm">
+                <!-- Mistakes rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ================= STATE MANAGEMENT ================= */
+        const AVATARS = ['🧑‍🎓', '🚀', '🧙‍♂️', '🦁', '🤖', '🦊', '🦉', '⚡'];
+        
+        let state = {
+            playerName: "Grammar Champ",
+            avatar: "🧑‍🎓",
+            soundEnabled: true,
+            stars: 0,
+            unlockedBadges: [],
+            currentMode: null, // 'campaign', 'survival', 'speed'
+            currentLevel: 1,
+            score: 0,
+            streak: 0,
+            maxStreak: 0,
+            lives: 3,
+            timeLeft: 60,
+            timerInterval: null,
+            questionIndex: 0,
+            activeQuestions: [],
+            userAnswers: [], // Stores history for review
+        };
+
+        /* ================= 40+ COMPREHENSIVE QUESTION BANK (100% ACTIVE VOICE) ================= */
+        const QUESTION_BANK = [
+            // LEVEL 1: TYPE 0 (ACTIVE VOICE FACTS & GENERAL TRUTHS)
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "If you _____ water to 100°C, it _____.",
+                options: ["heat / boils", "will heat / boils", "heat / will boil", "heated / boiled"],
+                correct: 0,
+                explanation: "This states a scientific fact in active voice. Both clauses use the Present Simple active tense.",
+                rule: "If + Present Simple, ... Present Simple"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "Plants die if they _____ enough sunlight.",
+                options: ["don't get", "won't get", "doesn't get", "didn't get"],
+                correct: 0,
+                explanation: "Active general truth: 'they' (subject) + 'don't get' (active present simple).",
+                rule: "Present Simple (Negative Active)"
+            },
+            {
+                type: "classify",
+                category: "Identification",
+                prompt: "Identify the conditional type: 'When the sun goes down, the temperature drops.'",
+                options: ["Type 0 (General Truth)", "Type 1 (Future Possibility)"],
+                correct: 0,
+                explanation: "It describes a natural law in active voice that is always true, so it is Type 0.",
+                rule: "Type 0 = General facts & natural laws"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "If people _____ food for a long time, they feel weak.",
+                options: ["don't eat", "won't eat", "not eat", "aren't eating"],
+                correct: 0,
+                explanation: "General human biology fact using active verb forms in Present Simple.",
+                rule: "If + Present Simple (Active)"
+            },
+            {
+                type: "unscramble",
+                category: "Type 0 Active Structure",
+                prompt: "Reorder clauses to make a valid active Type 0 sentence:",
+                words: ["If you mix red and blue,", "you get purple."],
+                correctOrder: [0, 1],
+                explanation: "Active voice: 'you' performs the mixing action and gets the color result.",
+                rule: "If-clause (Active), result clause (Active)."
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "Ice _____ into water if you heat it.",
+                options: ["turns", "will turn", "turned", "is turning"],
+                correct: 0,
+                explanation: "Physical change in active voice: Ice turns into water.",
+                rule: "Type 0 Active Fact"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "When you touch a hot stove, you _____ your skin.",
+                options: ["burn", "will burn", "are burning", "burned"],
+                correct: 0,
+                explanation: "Active cause and effect: 'you burn' (Present Simple active).",
+                rule: "When + Present Simple, Present Simple"
+            },
+            {
+                type: "classify",
+                category: "Identification",
+                prompt: "Identify the type: 'If you don't water garden flowers, they wither.'",
+                options: ["Type 0 (General Truth)", "Type 1 (Future Possibility)"],
+                correct: 0,
+                explanation: "Universal plant biological fact expressed strictly in active voice.",
+                rule: "Type 0 Fact"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "If you place wood on water, it _____.",
+                options: ["floats", "will float", "floated", "floating"],
+                correct: 0,
+                explanation: "Active voice density law: 'it floats' (Present Simple).",
+                rule: "Present Simple Active for physical laws"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "If you press this power button, the screen _____ up.",
+                options: ["lights", "will light", "lighted", "lighting"],
+                correct: 0,
+                explanation: "Active machine function: 'the screen lights up'.",
+                rule: "Type 0 Machine Function"
+            },
+
+            // LEVEL 2: TYPE 1 (ACTIVE VOICE FUTURE POSSIBILITIES)
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If it _____ tomorrow, we _____ to the amusement park.",
+                options: ["rains / won't go", "will rain / don't go", "rains / don't go", "will rain / won't go"],
+                correct: 0,
+                explanation: "Real future event in active voice. If-clause = Present Simple ('rains'), Main clause = Will + Verb ('won't go').",
+                rule: "If + Present Simple, ... Will + Base Verb"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "She _____ the exam if she studies hard.",
+                options: ["will pass", "passes", "passed", "is passing"],
+                correct: 0,
+                explanation: "Active future prediction: Subject 'She' performs the action 'will pass'.",
+                rule: "Main Clause = Will + Base Verb (Active)"
+            },
+            {
+                type: "classify",
+                category: "Identification",
+                prompt: "Identify the conditional type: 'If I see Mark later, I will give him the keys.'",
+                options: ["Type 0 (General Truth)", "Type 1 (Future Possibility)"],
+                correct: 1,
+                explanation: "Specific future event in active voice, so it is Type 1.",
+                rule: "Type 1 = Active future predictions"
+            },
+            {
+                type: "error",
+                category: "Grammar Error Detection",
+                prompt: "Find the error: 'If it will be sunny tomorrow, we will go hiking.'",
+                options: ["Change 'will be' to 'is'", "Change 'will go' to 'go'", "Remove 'tomorrow'", "No error"],
+                correct: 0,
+                explanation: "Never use 'will' inside the active 'if' condition clause! Use active present simple 'is'.",
+                rule: "NO 'will' inside the IF-clause!"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "Unless you hurry, you _____ the train!",
+                options: ["will miss", "miss", "don't miss", "won't miss"],
+                correct: 0,
+                explanation: "Active voice with 'unless' (if not): 'you will miss'.",
+                rule: "Unless + Present Simple, Will + Verb"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "What _____ if you don't wear a winter coat today?",
+                options: ["will happen", "happens", "happened", "does happen"],
+                correct: 0,
+                explanation: "Active question form predicting a future result: 'will happen'.",
+                rule: "Question Form in Active Type 1"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If I find your lost wallet, I _____ you right away.",
+                options: ["will call", "call", "called", "am calling"],
+                correct: 0,
+                explanation: "Active future promise: Subject 'I' will perform 'will call'.",
+                rule: "Type 1 Active Promise"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "They won't go on a outdoor picnic if the weather _____ terrible.",
+                options: ["is", "will be", "are", "be"],
+                correct: 0,
+                explanation: "Present simple active state in the if-clause: 'the weather is'.",
+                rule: "If + Present Simple"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If he _____ his homework now, he can play video games later.",
+                options: ["finishes", "will finish", "finish", "finished"],
+                correct: 0,
+                explanation: "Active third-person singular present tense: 'he finishes'.",
+                rule: "He/She/It + Present Simple (-s/-es)"
+            },
+            {
+                type: "unscramble",
+                category: "Clause Order Inversion",
+                prompt: "Reorder active clauses with main clause FIRST (no comma):",
+                words: ["We will miss the bus", "if we do not hurry."],
+                correctOrder: [0, 1],
+                explanation: "Active voice order where main clause comes first without a comma.",
+                rule: "Main Clause + If Clause (No comma)"
+            },
+
+            // LEVEL 3: MIXED ACTIVE CONDITIONS & CLAUSES
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "Babies _____ when they feel hungry or tired.",
+                options: ["cry", "will cry", "cried", "are crying"],
+                correct: 0,
+                explanation: "Active general human habit in Type 0: 'Babies cry'.",
+                rule: "Type 0 Active Behavior"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If Sarah _____ time tonight, she will bake chocolate chip cookies.",
+                options: ["has", "will have", "have", "is having"],
+                correct: 0,
+                explanation: "Active present simple verb: 'Sarah has'.",
+                rule: "Present Simple Active in IF-clause"
+            },
+            {
+                type: "classify",
+                category: "Identification",
+                prompt: "Identify the type: 'If our soccer team wins on Saturday, they will reach the finals.'",
+                options: ["Type 0 (General Truth)", "Type 1 (Future Possibility)"],
+                correct: 1,
+                explanation: "Specific future game prediction in active voice.",
+                rule: "Type 1 Active Prediction"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If you eat all that junk food, you _____ a stomachache later.",
+                options: ["will get", "get", "got", "are getting"],
+                correct: 0,
+                explanation: "Active future consequence: 'you will get'.",
+                rule: "Type 1 Active Consequence"
+            },
+            {
+                type: "error",
+                category: "Error Detection",
+                prompt: "Find the mistake: 'When you pour oil on water, it will float.' (General fact)",
+                options: ["Change 'will float' to 'floats'", "Change 'pour' to 'will pour'", "Change 'When' to 'Unless'", "No error"],
+                correct: 0,
+                explanation: "Active voice scientific truths use Present Simple ('floats') instead of 'will float'.",
+                rule: "Scientific truths use Type 0 Present Simple"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If traffic is heavy tomorrow morning, we _____ the subway instead.",
+                options: ["will take", "take", "took", "have taken"],
+                correct: 0,
+                explanation: "Active plan for tomorrow's scenario: 'we will take'.",
+                rule: "Will + Base Verb (Active)"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "Snow _____ when the temperature rises above 0°C.",
+                options: ["melts", "will melt", "melted", "is melting"],
+                correct: 0,
+                explanation: "Active physical transformation: 'Snow melts'.",
+                rule: "Present Simple Active for facts"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If I _____ enough money by next month, I will purchase a new bicycle.",
+                options: ["save", "will save", "saved", "am saving"],
+                correct: 0,
+                explanation: "Active verb in the condition clause: 'I save'.",
+                rule: "If + Present Simple Active"
+            },
+            {
+                type: "classify",
+                category: "Identification",
+                prompt: "Identify the type: 'If you freeze water, it turns into solid ice.'",
+                options: ["Type 0 (General Truth)", "Type 1 (Future Possibility)"],
+                correct: 0,
+                explanation: "Active scientific law true at all times.",
+                rule: "Type 0 Active Fact"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "What will you do if you _____ your key during the trip?",
+                options: ["lose", "will lose", "lost", "losing"],
+                correct: 0,
+                explanation: "Active present simple condition inside a question: 'you lose'.",
+                rule: "If + Present Simple Active"
+            },
+
+            // LEVEL 4: MASTER CHALLENGE (ALL ACTIVE VOICE)
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "If I drink strong coffee late at night, I _____ sleep well.",
+                options: ["don't", "won't", "didn't", "not"],
+                correct: 0,
+                explanation: "Active personal habit true all the time: 'I don't sleep'.",
+                rule: "Type 0 Routine/Habit"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If we don't leave the house right now, we _____ late for the movie.",
+                options: ["will arrive", "arrive", "arrived", "are arriving"],
+                correct: 0,
+                explanation: "Active future outcome prediction: 'we will arrive'.",
+                rule: "Type 1 Future Outcome"
+            },
+            {
+                type: "error",
+                category: "Error Detection",
+                prompt: "Find the mistake: 'If you will touch a burning candle, you burn yourself.'",
+                options: ["Change 'will touch' to 'touch'", "Change 'burn' to 'burned'", "Remove 'yourself'", "No error"],
+                correct: 0,
+                explanation: "Remove 'will' from the condition clause. Use active present tense 'touch'.",
+                rule: "No WILL inside IF-clause"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "She will buy that jacket if the store _____ a discount.",
+                options: ["offers", "will offer", "offer", "offered"],
+                correct: 0,
+                explanation: "Active condition clause with third-person singular subject: 'the store offers'.",
+                rule: "If + Present Simple Active"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "When iron gets wet, it _____ over time.",
+                options: ["rusts", "will rust", "rust", "is rusting"],
+                correct: 0,
+                explanation: "Active chemical process: 'iron rusts'.",
+                rule: "Scientific Fact in Active Voice"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If you _____ carefully to the teacher, you will understand the lesson.",
+                options: ["listen", "will listen", "listened", "are listening"],
+                correct: 0,
+                explanation: "Active condition clause: 'you listen'.",
+                rule: "If + Present Simple Active"
+            },
+            {
+                type: "classify",
+                category: "Identification",
+                prompt: "Identify the type: 'Unless it rains, we will play basketball outside.'",
+                options: ["Type 0 (General Truth)", "Type 1 (Future Possibility)"],
+                correct: 1,
+                explanation: "Active conditional sentence predicting a future sports activity.",
+                rule: "Type 1 with Unless"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If he does not study for the test, he _____ a low mark.",
+                options: ["will get", "gets", "got", "is getting"],
+                correct: 0,
+                explanation: "Active prediction of a future result: 'he will get'.",
+                rule: "Type 1 Future Prediction"
+            },
+            {
+                type: "mcq",
+                category: "Type 0",
+                prompt: "If you drop a heavy glass on concrete, it _____.",
+                options: ["shatters", "will shatter", "shattered", "is shattering"],
+                correct: 0,
+                explanation: "Active physical outcome that is always true: 'it shatters'.",
+                rule: "Type 0 Physical Fact"
+            },
+            {
+                type: "mcq",
+                category: "Type 1",
+                prompt: "If the train _____ on time, we will reach the hotel by 6 PM.",
+                options: ["arrives", "will arrive", "arrive", "arrived"],
+                correct: 0,
+                explanation: "Active condition clause: 'the train arrives'.",
+                rule: "If + Present Simple Active"
+            }
+        ];
+
+        /* ================= AUDIO SYNTHESIZER (TONE.JS / WEB AUDIO) ================= */
+        const SoundFX = {
+            init() {
+                this.synth = new Tone.Synth().toDestination();
+            },
+            correct() {
+                if (!state.soundEnabled) return;
+                try {
+                    const now = Tone.now();
+                    const synth = new Tone.PolySynth().toDestination();
+                    synth.triggerAttackRelease(["C5", "E5", "G5"], "8n", now);
+                } catch(e) {}
+            },
+            incorrect() {
+                if (!state.soundEnabled) return;
+                try {
+                    const now = Tone.now();
+                    const synth = new Tone.Synth().toDestination();
+                    synth.triggerAttackRelease("C3", "8n", now);
+                } catch(e) {}
+            },
+            levelUp() {
+                if (!state.soundEnabled) return;
+                try {
+                    const now = Tone.now();
+                    const synth = new Tone.PolySynth().toDestination();
+                    synth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "6n", now);
+                } catch(e) {}
+            }
+        };
+
+        /* ================= INITIALIZATION & NAVIGATION ================= */
+        window.onload = function() {
+            SoundFX.init();
+            renderAvatarGrid();
+            loadProfile();
+            renderBadges();
+        };
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            icon.className = state.soundEnabled ? "fa-solid fa-volume-high text-lg" : "fa-solid fa-volume-xmark text-lg text-slate-400";
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(screenId + 'Screen').classList.remove('hidden');
+        }
+
+        /* ================= PROFILE & BADGES ================= */
+        function renderAvatarGrid() {
+            const grid = document.getElementById('avatarGrid');
+            grid.innerHTML = AVATARS.map((av, idx) => `
+                <button onclick="selectAvatar('${av}')" class="avatar-btn text-2xl p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-brand-500 transition ${state.avatar === av ? 'border-brand-500 bg-brand-50 dark:bg-slate-800' : ''}">
+                    ${av}
+                </button>
+            `).join('');
+        }
+
+        function selectAvatar(av) {
+            state.avatar = av;
+            renderAvatarGrid();
+        }
+
+        function saveProfile() {
+            const nameInput = document.getElementById('playerName').value.trim();
+            if (nameInput) state.playerName = nameInput;
+            
+            document.getElementById('userNameDisplay').innerText = state.playerName;
+            document.getElementById('userAvatarDisplay').innerText = state.avatar;
+            
+            showScreen('modeSelect');
+        }
+
+        function loadProfile() {
+            document.getElementById('userNameDisplay').innerText = state.playerName;
+            document.getElementById('userAvatarDisplay').innerText = state.avatar;
+        }
+
+        const BADGES_LIST = [
+            { id: "novice", title: "Grammar Novice", desc: "Complete 1 level", icon: "🌱" },
+            { id: "fact_master", title: "Fact Master", desc: "100% on Type 0 questions", icon: "🔬" },
+            { id: "future_teller", title: "Future Teller", desc: "100% on Type 1 questions", icon: "🔮" },
+            { id: "grandmaster", title: "Grammar Grandmaster", desc: "Achieve a 10+ Streak", icon: "👑" }
+        ];
+
+        function renderBadges() {
+            const container = document.getElementById('badgesContainer');
+            container.innerHTML = BADGES_LIST.map(b => {
+                const unlocked = state.unlockedBadges.includes(b.id);
+                return `
+                    <div class="p-3 rounded-xl border ${unlocked ? 'border-amber-400/50 bg-amber-50/50 dark:bg-amber-950/20' : 'border-slate-200 dark:border-slate-800 opacity-50'} text-center flex flex-col items-center">
+                        <span class="text-2xl mb-1">${b.icon}</span>
+                        <span class="font-bold text-xs block">${b.title}</span>
+                        <span class="text-[10px] text-slate-400 block">${b.desc}</span>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('unlockedBadgesCount').innerText = state.unlockedBadges.length;
+        }
+
+        function checkBadges() {
+            if (state.streak >= 10 && !state.unlockedBadges.includes('grandmaster')) {
+                state.unlockedBadges.push('grandmaster');
+            }
+            renderBadges();
+        }
+
+        /* ================= MODES & LEVEL SELECT ================= */
+        function selectMode(mode) {
+            state.currentMode = mode;
+            if (mode === 'campaign') {
+                renderCampaignLevels();
+                showScreen('levelSelect');
+            } else if (mode === 'survival') {
+                startSurvivalMode();
+            } else if (mode === 'speed') {
+                startSpeedMode();
+            }
+        }
+
+        function renderCampaignLevels() {
+            const grid = document.getElementById('levelsGrid');
+            const levels = [
+                { num: 1, name: "Level 1: Type 0 Facts", filter: q => q.category === "Type 0" },
+                { num: 2, name: "Level 2: Type 1 Future", filter: q => q.category === "Type 1" },
+                { num: 3, name: "Level 3: Identification & Errors", filter: q => q.category === "Identification" || q.type === "error" },
+                { num: 4, name: "Level 4: Master Challenge", filter: () => true }
+            ];
+
+            grid.innerHTML = levels.map(lvl => `
+                <div onclick="startCampaignLevel(${lvl.num})" class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition cursor-pointer flex justify-between items-center group">
+                    <div>
+                        <span class="text-xs font-bold text-brand-600 dark:text-indigo-400 uppercase tracking-wider block mb-1">Campaign</span>
+                        <h3 class="font-bold text-lg">${lvl.name}</h3>
+                        <p class="text-xs text-slate-400">10 Questions</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ================= GAME ENGINE ================= */
+        function startCampaignLevel(lvlNum) {
+            state.currentLevel = lvlNum;
+            if (lvlNum === 1) state.activeQuestions = QUESTION_BANK.filter(q => q.category === "Type 0").slice(0, 10);
+            else if (lvlNum === 2) state.activeQuestions = QUESTION_BANK.filter(q => q.category === "Type 1").slice(0, 10);
+            else if (lvlNum === 3) state.activeQuestions = QUESTION_BANK.filter(q => q.category === "Identification" || q.type === "error").slice(0, 10);
+            else state.activeQuestions = [...QUESTION_BANK].sort(() => 0.5 - Math.random()).slice(0, 10);
+
+            resetGameHUD();
+            document.getElementById('hudCenter').innerHTML = `<span class="text-xs font-bold text-slate-400 uppercase">Level ${lvlNum}</span>`;
+            showScreen('game');
+            loadQuestion();
+        }
+
+        function startSurvivalMode() {
+            state.lives = 3;
+            state.activeQuestions = [...QUESTION_BANK].sort(() => 0.5 - Math.random());
+            resetGameHUD();
+            updateHeartsDisplay();
+            showScreen('game');
+            loadQuestion();
+        }
+
+        function startSpeedMode() {
+            state.timeLeft = 60;
+            state.activeQuestions = [...QUESTION_BANK].sort(() => 0.5 - Math.random());
+            resetGameHUD();
+            
+            // Timer HUD
+            document.getElementById('hudCenter').innerHTML = `
+                <div class="flex items-center space-x-1.5 text-amber-500 font-black text-xl">
+                    <i class="fa-solid fa-clock"></i> <span id="timerVal">60</span>s
+                </div>
+            `;
+
+            state.timerInterval = setInterval(() => {
+                state.timeLeft--;
+                document.getElementById('timerVal').innerText = state.timeLeft;
+                if (state.timeLeft <= 0) {
+                    clearInterval(state.timerInterval);
+                    endGame();
+                }
+            }, 1000);
+
+            showScreen('game');
+            loadQuestion();
+        }
+
+        function resetGameHUD() {
+            state.score = 0;
+            state.streak = 0;
+            state.maxStreak = 0;
+            state.questionIndex = 0;
+            state.userAnswers = [];
+            
+            document.getElementById('gameScore').innerText = "0";
+            document.getElementById('gameStreak').innerText = "0";
+            document.getElementById('comboBadge').classList.add('hidden');
+            document.getElementById('gameProgressBar').style.width = "0%";
+            document.getElementById('feedbackCard').classList.add('hidden');
+        }
+
+        function updateHeartsDisplay() {
+            let heartsHtml = '<div class="flex space-x-1 text-red-500 text-lg">';
+            for (let i = 0; i < 3; i++) {
+                heartsHtml += i < state.lives ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart opacity-30"></i>';
+            }
+            heartsHtml += '</div>';
+            document.getElementById('hudCenter').innerHTML = heartsHtml;
+        }
+
+        function loadQuestion() {
+            document.getElementById('feedbackCard').classList.add('hidden');
+            
+            if (state.questionIndex >= state.activeQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const q = state.activeQuestions[state.questionIndex];
+            
+            // Update HUD Tags
+            document.getElementById('questionCategoryTag').innerText = `${q.category} • ${q.type.toUpperCase()}`;
+            document.getElementById('questionNumTag').innerText = `Question ${state.questionIndex + 1} / ${state.activeQuestions.length}`;
+            
+            // Update Progress Bar
+            const progPercent = ((state.questionIndex) / state.activeQuestions.length) * 100;
+            document.getElementById('gameProgressBar').style.width = `${progPercent}%`;
+
+            // Prompt
+            document.getElementById('questionPrompt').innerText = q.prompt;
+
+            // Render Answer Area based on question type
+            const area = document.getElementById('answerArea');
+            area.innerHTML = '';
+
+            if (q.type === 'unscramble') {
+                // Interactive ordering / clause buttons
+                area.innerHTML = `
+                    <p class="text-xs text-slate-400 font-semibold mb-2">Tap clauses in the correct order:</p>
+                    <div id="unscrambleSlots" class="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl min-h-[50px] flex flex-wrap gap-2 mb-3 border border-dashed border-slate-300 dark:border-slate-800"></div>
+                    <div id="unscrambleOptions" class="flex flex-wrap gap-2">
+                        ${q.words.map((w, idx) => `
+                            <button onclick="pickWord(${idx})" id="wordBtn_${idx}" class="px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-brand-500 hover:text-white font-medium text-sm transition">
+                                ${w}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <button onclick="submitUnscramble()" class="w-full mt-4 py-3 rounded-xl bg-brand-600 text-white font-bold text-sm">Check Clause Order</button>
+                `;
+                window.unscrambleSelection = [];
+            } else {
+                // MCQ / Classification / Error Selection
+                area.innerHTML = q.options.map((opt, idx) => `
+                    <button onclick="checkAnswer(${idx})" class="option-btn w-full text-left p-4 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-brand-500 font-medium text-sm transition flex justify-between items-center group">
+                        <span>${opt}</span>
+                        <i class="fa-solid fa-circle-chevron-right opacity-0 group-hover:opacity-100 text-brand-500 transition"></i>
+                    </button>
+                `).join('');
+            }
+        }
+
+        /* Unscramble Helpers */
+        function pickWord(idx) {
+            const q = state.activeQuestions[state.questionIndex];
+            if (window.unscrambleSelection.includes(idx)) return;
+            
+            window.unscrambleSelection.push(idx);
+            document.getElementById(`wordBtn_${idx}`).classList.add('opacity-30', 'pointer-events-none');
+            
+            const slots = document.getElementById('unscrambleSlots');
+            slots.innerHTML = window.unscrambleSelection.map(i => `
+                <span class="px-3 py-1.5 rounded-lg bg-brand-500 text-white font-semibold text-xs animate-bounce-short">
+                    ${q.words[i]}
+                </span>
+            `).join('');
+        }
+
+        function submitUnscramble() {
+            const q = state.activeQuestions[state.questionIndex];
+            const isCorrect = JSON.stringify(window.unscrambleSelection) === JSON.stringify(q.correctOrder);
+            handleAnswerResult(isCorrect, q);
+        }
+
+        function checkAnswer(selectedIdx) {
+            const q = state.activeQuestions[state.questionIndex];
+            const isCorrect = selectedIdx === q.correct;
+            handleAnswerResult(isCorrect, q, selectedIdx);
+        }
+
+        function handleAnswerResult(isCorrect, question, selectedIdx = null) {
+            // Save answer state for review modal
+            state.userAnswers.push({
+                question: question,
+                isCorrect: isCorrect,
+                userChoice: selectedIdx !== null && question.options ? question.options[selectedIdx] : 'Custom Order'
+            });
+
+            // Score & Streak logic
+            if (isCorrect) {
+                SoundFX.correct();
+                state.streak++;
+                if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+                
+                const comboMultiplier = state.streak >= 3 ? 2 : 1;
+                state.score += 100 * comboMultiplier;
+
+                if (state.streak >= 3) {
+                    document.getElementById('comboBadge').classList.remove('hidden');
+                    document.getElementById('comboBadge').innerText = `x${comboMultiplier} Combo!`;
+                }
+            } else {
+                SoundFX.incorrect();
+                state.streak = 0;
+                document.getElementById('comboBadge').classList.add('hidden');
+
+                if (state.currentMode === 'survival') {
+                    state.lives--;
+                    updateHeartsDisplay();
+                    if (state.lives <= 0) {
+                        endGame();
+                        return;
+                    }
+                }
+            }
+
+            checkBadges();
+
+            // Update HUD
+            document.getElementById('gameScore').innerText = state.score;
+            document.getElementById('gameStreak').innerText = state.streak;
+
+            // Render Feedback Card
+            const fbCard = document.getElementById('feedbackCard');
+            const fbIcon = document.getElementById('feedbackIcon');
+            const fbTitle = document.getElementById('feedbackTitle');
+            const fbText = document.getElementById('feedbackText');
+            const ruleBox = document.getElementById('grammarTipBox');
+
+            fbCard.classList.remove('hidden', 'bg-emerald-500/10', 'border-emerald-500/30', 'bg-red-500/10', 'border-red-500/30');
+
+            if (isCorrect) {
+                fbCard.classList.add('bg-emerald-500/10', 'border-emerald-500/30');
+                fbIcon.innerHTML = '🎉';
+                fbTitle.className = 'font-bold text-base mb-1 text-emerald-600 dark:text-emerald-400';
+                fbTitle.innerText = "Excellent! Correct Answer.";
+            } else {
+                fbCard.classList.add('bg-red-500/10', 'border-red-500/30');
+                fbIcon.innerHTML = '❌';
+                fbTitle.className = 'font-bold text-base mb-1 text-red-600 dark:text-red-400';
+                fbTitle.innerText = "Not quite right!";
+            }
+
+            fbText.innerText = question.explanation;
+            ruleBox.innerHTML = `<strong>Grammar Rule:</strong> ${question.rule}`;
+        }
+
+        function nextQuestion() {
+            state.questionIndex++;
+            loadQuestion();
+        }
+
+        /* ================= GAME END & RESULTS ================= */
+        function endGame() {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            
+            SoundFX.levelUp();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+            // Calculate stats
+            const total = state.userAnswers.length;
+            const correctCount = state.userAnswers.filter(a => a.isCorrect).length;
+            const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+
+            document.getElementById('finalScore').innerText = state.score;
+            document.getElementById('finalAccuracy').innerText = `${accuracy}%`;
+            document.getElementById('finalStreak').innerText = state.maxStreak;
+
+            const errorCount = total - correctCount;
+            document.getElementById('errorCountTag').innerText = errorCount;
+
+            // Add stars
+            state.stars += Math.floor(state.score / 100);
+            document.getElementById('totalStars').innerText = state.stars;
+
+            showScreen('results');
+        }
+
+        function retryGame() {
+            if (state.currentMode === 'campaign') startCampaignLevel(state.currentLevel);
+            else if (state.currentMode === 'survival') startSurvivalMode();
+            else if (state.currentMode === 'speed') startSpeedMode();
+        }
+
+        /* ================= MODALS & CHEAT SHEET ================= */
+        function openGrammarModal() {
+            document.getElementById('grammarModal').classList.remove('hidden');
+        }
+
+        function closeGrammarModal() {
+            document.getElementById('grammarModal').classList.add('hidden');
+        }
+
+        function showReviewModal() {
+            const list = document.getElementById('reviewList');
+            const errors = state.userAnswers.filter(a => !a.isCorrect);
+
+            if (errors.length === 0) {
+                list.innerHTML = `<p class="text-center text-emerald-500 font-bold py-6"><i class="fa-solid fa-circle-check text-3xl block mb-2"></i>Perfect Score! No mistakes to review.</p>`;
+            } else {
+                list.innerHTML = errors.map((e, idx) => `
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                        <span class="text-xs font-bold text-red-500 uppercase tracking-wider block mb-1">Mistake #${idx + 1}</span>
+                        <p class="font-bold text-sm mb-2">${e.question.prompt}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2"><strong>Your Answer:</strong> <span class="text-red-500">${e.userChoice}</span></p>
+                        <p class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2"><strong>Rule:</strong> ${e.question.rule}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">${e.question.explanation}</p>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('reviewModal').classList.remove('hidden');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
